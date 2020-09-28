@@ -11,7 +11,13 @@ def main(args):
 
     if args.feature_extraction:
         preprocess_class = preprocessing()
-        preprocess_class.data_preprocess()
+        corpus, label = preprocess_class.data_preprocess()
+        # preprocess_class.remove_infrequent_word(corpus)
+        new_corpus = [" ".join(preprocess_class.get_features(sentence, "stopword")) for sentence in corpus] # if include stopword
+        new_corpus = [" ".join(preprocess_class.get_features(sentence, "stem")) for sentence in new_corpus]
+        new_corpus = [" ".join(preprocess_class.get_features(sentence, "lemmatize")) for sentence in new_corpus]
+
+
 
     # if args.classification:
         # classify_class = classification()

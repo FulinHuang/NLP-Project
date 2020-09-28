@@ -6,6 +6,7 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.stem.porter import PorterStemmer
 from nltk.corpus import stopwords
+from gensim.corpora import Dictionary
 
 from string import punctuation
 
@@ -40,6 +41,14 @@ class preprocessing():
 
         return self.corpus, self.labels
 
+    def remove_infrequent_word(self, corpus):
+        # https://radimrehurek.com/gensim/corpora/dictionary.html
+        tokenize_corpus = [word_tokenize(sentence) for sentence in corpus]
+        print(tokenize_corpus)
+        dct = Dictionary(tokenize_corpus)
+        print(dct)
+        dct.filter_extremes()
+        print(tokenize_corpus)
 
     def get_features(self, sentence, type):
         # tokenize the sentence
@@ -47,7 +56,7 @@ class preprocessing():
 
         if type == "stopword":
             stop_words = set(stopwords.words("english"))
-            output = [" ".join(i for i in words if not i in stop_words)]
+            output = [" ".join(i for i in words if not i in stop_words)] # convert back to a sentence
 
         elif type == "lemmatize":
             lemmatizer = WordNetLemmatizer()
@@ -61,6 +70,22 @@ class preprocessing():
 
         return output
 
+    def split_data(self, corpus, label):
+        return None
+
+    def lr_classifier(self):
+        return None
+
+    def svm_classifier(self):
+        return None
+
+    def nb_classifier(self):
+        return None
+
 #    nltk  https://www.digitalocean.com/community/tutorials/how-to-perform-sentiment-analysis-in-python-3-using-the-natural-language-toolkit-nltk
     #  lemmatize... https://towardsdatascience.com/nlp-for-beginners-cleaning-preprocessing-text-data-ae8e306bef0f
 
+# MultinomialNB includes a smoothing parameter alpha
+
+# tf-idf TfidfVectorizer https://maelfabien.github.io/machinelearning/NLP_2/#iii-limits-of-bow-methods
+# https://scikit-learn.org/stable/modules/feature_extraction.html#text-feature-extraction
