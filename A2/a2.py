@@ -71,29 +71,26 @@ if __name__ == '__main__':
     dev_instances = {k: v for (k, v) in dev_instances.items() if k in dev_key}
     test_instances = {k: v for (k, v) in test_instances.items() if k in test_key}
 
-    # read to use here
-    print(len(dev_instances))  # number of dev instances
-    print(len(test_instances))  # number of test instances
-
-    # print(dev_instances['d001.s001.t002'].context, dev_instances['d001.s001.t002'].id,
-    #       dev_instances['d001.s001.t002'].lemma, dev_instances['d001.s001.t002'].index)
-
     dev_instances = data_preprocess(dev_instances)
     test_instances = data_preprocess(test_instances)
-    print(test_instances)
 
     print(test_instances['d002.s001.t001'].context, test_instances['d002.s001.t001'].id,
           test_instances['d002.s001.t001'].lemma, test_instances['d002.s001.t001'].index)
 
     # Baseline
-    # TODO: dev or test instance?
-    baseline_predict = baseline(test_instances)
-    baseline_accuracy = get_accuracy(baseline_predict, test_key)
-    print("Baseline accuracy is ", baseline_accuracy)
+    dev_baseline_predict = baseline(dev_instances)
+    test_baseline_predict = baseline(test_instances)
+    dev_baseline_accuracy = get_accuracy(dev_baseline_predict, dev_key)
+    test_baseline_accuracy = get_accuracy(test_baseline_predict, test_key)
+    print("Baseline dev accuracy is {}, and test accuracy is {}".format(dev_baseline_accuracy, test_baseline_accuracy))
 
     # lesk
-    lesk_predict = lesk_wsd(test_instances)
-    lesk_accuracy = get_accuracy(lesk_predict, test_key)
-    print("Lesk accuracy is ", lesk_accuracy)
+    dev_lesk_predict = lesk_wsd(dev_instances)
+    test_lesk_predict = lesk_wsd(test_instances)
+    dev_lesk_accuracy = get_accuracy(dev_lesk_predict, dev_key)
+    test_lesk_accuracy = get_accuracy(test_lesk_predict, test_key)
+    print("Lesk dev accuracy is {}, and test accuracy is {}".format(dev_lesk_accuracy, test_lesk_accuracy))
+
+
 
     # TODO : Deal with words that have understore
