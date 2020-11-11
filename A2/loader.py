@@ -46,6 +46,24 @@ def load_instances(f):
                     instances[my_id] = WSDInstance(my_id, lemma, context, i)
     return dev_instances, test_instances
 
+
+def senseval_load_instances(f):
+    tree = ET.parse(f)
+    root = tree.getroot()
+
+    dev_instances = {}
+    for text in root:
+        instances = dev_instances
+        for sentence in text:
+            # construct sentence context
+            context = [to_ascii(el.attrib['lemma']) for el in sentence]
+            for i, el in enumerate(sentence):
+                if el.tag == 'instance':
+                    my_id = el.attrib['id']
+                    lemma = to_ascii(el.attrib['lemma'])
+                    instances[my_id] = WSDInstance(my_id, lemma, context, i)
+    return dev_instances
+
 def load_key(f):
     '''
     Load the solutions as dicts.
@@ -63,6 +81,16 @@ def load_key(f):
         else:
             test_key[my_id] = sense_key.split()
     return dev_key, test_key
+
+def senseval_load_key(f):
+    dev_key = {}
+    for line in open(f):
+        if len(line) <= 1: continue
+        my_id, sense_key = line.strip().split(' ', 1)
+        dev_key[my_id] = sense_key.split()
+
+    return dev_key
+
 
 def to_ascii(s):
     # remove all non-ascii characters
