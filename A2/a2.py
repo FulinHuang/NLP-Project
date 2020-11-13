@@ -15,8 +15,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import svm
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import accuracy_score
-from sklearn.ensemble import RandomForestClassifier
-
+from sklearn.linear_model import LogisticRegression
 
 import xml.etree.cElementTree as ET
 import codecs
@@ -58,23 +57,18 @@ def lesk_wsd(instance):
     dict = {k: nltk.wsd.lesk(v.context, v.lemma.decode("utf-8")) for k, v in instance.items()}
     return dict
 
-def find_context(lexical_item, instance, key):
-    print("key", key)
-    context_dict = defaultdict(list)
-    synset_dict = defaultdict(list)
-    for item in lexical_item:
-        context_sublist = []
-        synset_sublist = []
-        for (k, v) in instance.items():
-            if v.lemma.decode("utf-8") == item:
-                context = [i.decode("utf-8") for i in v.context]
-                context = ' '.join(context)
-                context_sublist.append(context)
-                synset = [wn.lemma_from_key(i).synset() for i in key[k]][0]
-                synset_sublist.append(str(synset))
-        context_dict[item] = context_sublist
-        synset_dict[item] = synset_sublist
-    return context_dict, synset_dict
+def find_context(instance, key):
+    context_list = []
+    synset_list = []
+
+    for (k, v) in instance.items():
+        context = [i.decode("utf-8") for i in v.context]
+        context = ' '.join(context)
+        context_list.append(context)
+        synset = [wn.lemma_from_key(i).synset() for i in key[k]][0]
+        synset_list.append(str(synset))
+
+    return context_list, synset_list
 
 
 def find_definition(lexical_item):
@@ -102,8 +96,8 @@ def svm_classifier(X_train, y_train, X_test, y_test):
 
     return accuracy_score(y_test, y_predict)
 
-def random_forest_classifier(X_train, y_train, X_test, y_test):
-    clf = RandomForestClassifier()
+def logistic_regression_classifier(X_train, y_train, X_test, y_test):
+    clf = LogisticRegression()
     clf.fit(X_train, y_train)
     y_predict = clf.predict(X_test)
 
@@ -232,16 +226,16 @@ if __name__ == '__main__':
     # print(sense3_dev_synset_dict)
 
 
-    boostrap_method(lexical_item, dev_instances, dev_key, test_instances, test_key)
-    # print("Context for Each Lexical Term:")
-    # for (k, v) in test_context_dict.items():
-    #     print("-" * 40)
-    #     print(k, ":")
-    #     for context in v:
-    #         print(context)
-    #     print(k, " DEFINITIONS: ")
-    #     find_definition(k)
+    # boostrap_method(lexical_item, dev_instances, dev_key, test_instances, test_key)
 
 
+    dev_context, dev_synset = find_context(dev_instances, dev_key)
+    test_context, test_synset = find_context(test_instances, test_key)
 
+    X_train, y_train, X_test, y_test = create_seed_set(dev_context, dev_synset, test_context, test_synset)
 
+    accuracy = svm_classifier(X_train, y_train, X_test, y_test)
+    print("The accuracy is ", accuracy)
+
+    accuracy = logistic_regression_classifier(X_train, y_train, X_test, y_test)
+    print("The accuracy is ", accuracy)
