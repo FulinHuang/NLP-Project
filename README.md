@@ -1,8 +1,8 @@
-# COMP550NLP
-McGill COMP 550 Natural Language Processing
+# NLP Projects
+McGill Natural Language Processing
 
-## Assignment 1 
-- Sentiment Analysis 
+## Sentiment Analysis 
+- Train models that classify a sentence into either a positive or negative sentiment
 
-## Assignment 2 
-- Word Sense Disambiguation
+## Word Sense Disambiguation (WSD)
+- The baseline method, Lesk’s Algorithm, Yarowsky's algorithm, and logistic regression model were implemented to solve WSD
