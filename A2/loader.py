@@ -30,9 +30,7 @@ def load_instances(f):
     test_instances = {}
     
     for text in root:
-        # if text.attrib['id'].startswith('d001'):
         if text.attrib['id'].startswith('d001'):
-
             instances = dev_instances
         else:
             instances = test_instances
@@ -45,24 +43,6 @@ def load_instances(f):
                     lemma = to_ascii(el.attrib['lemma'])
                     instances[my_id] = WSDInstance(my_id, lemma, context, i)
     return dev_instances, test_instances
-
-
-def senseval_load_instances(f):
-    tree = ET.parse(f)
-    root = tree.getroot()
-
-    dev_instances = {}
-    for text in root:
-        instances = dev_instances
-        for sentence in text:
-            # construct sentence context
-            context = [to_ascii(el.attrib['lemma']) for el in sentence]
-            for i, el in enumerate(sentence):
-                if el.tag == 'instance':
-                    my_id = el.attrib['id']
-                    lemma = to_ascii(el.attrib['lemma'])
-                    instances[my_id] = WSDInstance(my_id, lemma, context, i)
-    return dev_instances
 
 def load_key(f):
     '''
@@ -82,16 +62,6 @@ def load_key(f):
             test_key[my_id] = sense_key.split()
     return dev_key, test_key
 
-def senseval_load_key(f):
-    dev_key = {}
-    for line in open(f):
-        if len(line) <= 1: continue
-        my_id, sense_key = line.strip().split(' ', 1)
-        dev_key[my_id] = sense_key.split()
-
-    return dev_key
-
-
 def to_ascii(s):
     # remove all non-ascii characters
     return codecs.encode(s, 'ascii', 'ignore')
@@ -109,14 +79,4 @@ if __name__ == '__main__':
     # read to use here
     print(len(dev_instances)) # number of dev instances
     print(len(test_instances)) # number of test instances
-
-    print(dev_instances)
-    print(test_instances)
-
-    print(dev_key)
-    print(test_key)
-
-    print(dev_instances['d001.s003.t001'].context)
-
-
-
+    
